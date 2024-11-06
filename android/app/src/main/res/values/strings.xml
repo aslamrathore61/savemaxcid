@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Save Max CID</string>
+    <string name="canada_location">Save Max Canada</string>
+    <string name="india_location">Save Max India</string>
+    <string name="dubai_location">Save Max Dubai</string>
+</resources>
