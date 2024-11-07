@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:savemaxcid/AppIconIOS.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'IconChanger.dart';
@@ -14,7 +16,8 @@ class InAppWebViewPage extends StatefulWidget {
 
 class _InAppWebViewPageState extends State<InAppWebViewPage> {
 
-  static const _channel = MethodChannel('com.savemax.cid/icon');
+  AppIconIOS? currentIcon;
+
   InAppWebViewController? webViewController;
   String? url; // Holds the current URL to be loaded
   bool isFloatingButtonsVisible = false;
@@ -27,9 +30,38 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
 
   @override
   void initState() {
+
+    if(Platform.isIOS) {
+      FlutterDynamicIcon.setApplicationIconBadgeNumber(2);
+      FlutterDynamicIcon.getAlternateIconName().then((iconName) {
+        setState(() {
+          currentIcon = AppIconIOS.values.byName(iconName ?? 'canada');
+        });
+      });
+    }
+
     super.initState();
     _loadSavedCountryUrl(); // Load the saved URL on app launch
   }
+
+
+  void changeIOSAppIcon(AppIconIOS icon) async {
+    try {
+      // Check if the device supports alternate icons
+      if (await FlutterDynamicIcon.supportsAlternateIcons) {
+        // Change the icon
+        await FlutterDynamicIcon.setAlternateIconName(icon.name);
+        setState(() {
+          currentIcon = icon; // Update the currentIcon value
+        });
+      }else {
+        print('notSupportAlternativeIcon');
+      }
+    } on PlatformException catch (_) {
+      print('Failed to change app icon');
+    }
+  }
+
 
   // Load saved URL from SharedPreferences
   Future<void> _loadSavedCountryUrl() async {
@@ -162,7 +194,10 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
 
                 if(Platform.isAndroid) {
                   IconChanger.switchIcon('MainActivityCanada');
+                }else {
+                  changeIOSAppIcon(AppIconIOS.canada);
                 }
+
                 setState(() {
                   url = urlCanada; // Update the URL state
                 });
@@ -187,6 +222,8 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
 
                 if (Platform.isAndroid) {
                   IconChanger.switchIcon('MainActivityIndia');
+                }else {
+                  changeIOSAppIcon(AppIconIOS.india);
                 }
 
                 setState(() {
@@ -210,6 +247,13 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
                 // Switch to UAE URL
                 await _clearCacheAndLoadNewUrl(urlUAE);
                 await _saveSelectedCountryUrl(urlUAE); // Save the selected country
+
+                if (Platform.isAndroid) {
+                  IconChanger.switchIcon('MainActivityDubai');
+                }else {
+                  changeIOSAppIcon(AppIconIOS.dubai);
+                }
+
                 setState(() {
                   url = urlUAE; // Update the URL state
                 });

@@ -34,6 +34,7 @@ dependencies:
   shared_preferences: ^2.3.2
   flutter_inappwebview: ^6.1.5
   flutter_native_splash: ^2.4.2
+  flutter_dynamic_icon: ^2.1.0 #For IOS support only
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
